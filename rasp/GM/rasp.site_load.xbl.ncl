@@ -18,8 +18,8 @@ end if
 ; blsectionztop = 18 ; Kft (unless  UNITS are "metric")
 ; blsectionztop = 5  ; Km  (if UNITS are "metric")
 
-if( Region .eq. "TIR" .or. Region .eq. "TEST5" ) then
-    blsectionztop = 5  ; Km  (if UNITS are "metric")
+if( Region .eq. "PNW" ) then
+    blsectionztop = 18 ; Kft (UNITS are "american")
 else
     blsectionztop = 5  ; Km  (if UNITS are "metric")
 end if

@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile
       args:
         FEDORA_VERSION: ${FEDORA_VERSION}
+        TZ: ${TZ:-Europe/Berlin}
   wrf_build:
     image: ${WRF_IMAGE}:fedora${FEDORA_VERSION}_WRF${WRF_VERSION}-${WRF_MARCH_BUILD}
     build:
@@ -47,6 +48,7 @@ services:
     environment:
       - START_DAY=${START_DAY:-0}
       - OFFSET_HOUR=${OFFSET_HOUR:-0}
+      - TZ=${TZ:-Europe/Berlin}
   rasp_blank:
     image: ${RASP_IMAGE}:fedora${FEDORA_VERSION}_WRF${WRF_VERSION}-${WRF_MARCH_PROD}-blank_${REGION}
     build:
@@ -67,3 +69,4 @@ services:
     environment:
       - START_DAY=${START_DAY:-0}
       - OFFSET_HOUR=${OFFSET_HOUR:-0}
+      - TZ=${TZ:-Europe/Berlin}

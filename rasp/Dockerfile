@@ -20,8 +20,7 @@ FROM ${WRF_IMAGE}:fedora${FEDORA_VERSION}_WRF${WRF_VERSION}-${WRF_MARCH_PROD} AS
 
 FROM ${BASE_IMAGE}:fedora${FEDORA_VERSION} AS raspbuild
 ARG REGION
-ENV TZ=Europe/Berlin \
-  BASEDIR=/root/rasp
+ENV BASEDIR=/root/rasp
 
 COPY --from=wrf_build /root/rasp/ $BASEDIR
 RUN mkdir $BASEDIR/build/build \

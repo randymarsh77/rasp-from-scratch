@@ -1,0 +1,95 @@
+#############################################################################
+################## RUN-ARGUMENT-SPECIFIC RASP PARAMETERS ####################
+#############################################################################
+### For updated information on these model parameters see                 ###
+### http://www.drjack.info/twiki/bin/view/RASPop/RunParametersDescription ###
+#############################################################################
+
+# SET REGIONS PROCESSED BY THIS RUN
+@REGION_DOLIST = ( 'PNW' );
+
+# SET MODEL USED FOR DOWNLOADED GRIB FILES
+$GRIBFILE_MODEL  = 'GFSA' ;
+# Subregion window passed to the NOMADS GRIB filter; must cover d01 with margin
+# (d01 spans roughly 44N-53.4N, 130.2W-114.8W)
+$GRIB_LEFT_LON   = -132 ;
+$GRIB_RIGHT_LON  = -113 ;
+$GRIB_BOTTOM_LAT =  42 ;
+$GRIB_TOP_LAT    =  55 ;
+
+$LSEND = 0 ;
+$LSAVE = 0 ;
+
+##################################################################
+#############  START OF REGION DEPENDENT PARAMETERS  #############
+# SET RUN TYPE
+# LRUN_WINDOW 0= no_windowing 2= windowing_run
+$LRUN_WINDOW{'PNW'} = 0 ;
+
+# SET BASIC PARAMETER LIST
+@{$PARAMETER_DOLIST{'PNW'}} = ( 'wstar','bsratio','wstar_bsratio','hglider','dglider','hwcrit','dwcrit','hbl','dbl','bltopvariab','wblmaxmin','zwblmaxmin','cloudsuck','sfcsunpct','sfcshf','sfctemp','sfcdewpt','mslpress','sfcwind0','sfcwind','sfcwind2','blwind','bltopwind','blwindshear','zsfclcldif','zsfclcl','zsfclclmask','zblcldif','zblcl','zblclmask','blicw','blcwbase','blcloudpct','cfracl','cfracm','cfrach','rain1','cape','press950','press900','press850','press800','press750','press700','press650','press600','press550','press500','pfd_tot' );
+
+# ADD POSSIBLE SOUNDINGS (corresponding data must be set in file GM/rasp.region_data.ncl)
+push @{$PARAMETER_DOLIST{'PNW'}}, ( );
+
+# SET GRIB FILE PROCESSING
+# GRIBFILES_PER_FORECAST_PERIOD IS NUMBER OF GRIB FILES PROCESSED AT SAME TIME
+$GRIBFILES_PER_FORECAST_PERIOD{'PNW'} = 6 ;
+# BLIPMAPFILEDOLIST LISTS ALL GRIB FILES NEEDED
+
+# SET DOMAIN PARAMETERS FOR STAGE1 [NON-WINDOW] ITERATION
+$FORECAST_PERIODHRS{'PNW'}[0]              = 15;  # used only by initialization programs
+$BOUNDARY_UPDATE_PERIODHRS{'PNW'}[0]       = 3;   # used only by initialization programs
+$NDOWN_BOUNDARY_UPDATE_PERIODHRS{'PNW'}[0] = 0;   # should always be 0 for non-windowed case
+
+# SET DOMAIN START/END TIMES
+$DOMAIN1_TIMESTEP{'PNW'}[0]        = 180;
+$DOMAIN2_START_DELTAMINS{'PNW'}[0] = 0;           # if non-zero, must set namelist.template INPUT_FROM_FILE=false
+$DOMAIN2_END_DELTAMINS{'PNW'}[0]   = 0;           # relative to domain1
+
+@{$PLOT_IMAGE_SIZE{'PNW'}[0]} = ( '', '1600x1600' );
+
+$day = 0;
+$offset = 0;
+if(defined $ENV{'START_DAY'}) {
+    $day = int($ENV{'START_DAY'});
+}
+if(defined $ENV{'OFFSET_HOUR'}) {
+    $offset = int($ENV{'OFFSET_HOUR'});
+}
+
+chomp($LOCALTIME_ID{'PNW'}  = `date -d "$day days" +%Z`);
+$LOCALTIME_ADJ{'PNW'} = substr `date -d "$day days" +%z`,0,3; # Only whole hours are taken. RASP cannot handle timezones such as +0530 at the moment
+
+# Pacific time: PDT = UTC-7, PST = UTC-8. Model start is 1h before the first
+# plot hour; forecast window is 15h (see FORECAST_PERIODHRS above), crossing
+# 0Z is fine since end time is computed by date arithmetic.
+$ISDST = ((localtime(time + $day*24*60*60))[8]); # Determine if the simulation date has DST
+if ($ISDST) {
+    $hourBegin = 14;                              # 14Z = 0700 PDT
+    $DOMAIN1_STARTHH{'PNW'}[0]         = '14';    # must have grib file available for this time
+    $DOMAIN1_ENDHH{'PNW'}[0]           = '05';
+    @{$PLOT_HHMMLIST{'PNW'}[0]} =       ( '0800','0900','1000','1100','1200','1300','1400','1500','1600','1700','1800','1900','2000');
+    @{$SAVE_PLOT_HHMMLIST{'PNW'}[0]} =  ( '0800','0900','1000','1100','1200','1300','1400','1500','1600','1700','1800','1900','2000');
+} else {
+    $hourBegin = 15;                              # 15Z = 0700 PST
+    $DOMAIN1_STARTHH{'PNW'}[0]         = '15';    # must have grib file available for this time
+    $DOMAIN1_ENDHH{'PNW'}[0]           = '06';
+    @{$PLOT_HHMMLIST{'PNW'}[0]} =       ( '0800','0900','1000','1100','1200','1300','1400','1500','1600','1700','1800','1900','2000');
+    @{$SAVE_PLOT_HHMMLIST{'PNW'}[0]} =  ( '0800','0900','1000','1100','1200','1300','1400','1500','1600','1700','1800','1900','2000');
+}
+
+$hourBegin += 24*$day - $offset;
+
+%GRIBFILE_DOLIST = ( 'PNW'   => [ sprintf("%dZ+%d",$offset,$hourBegin),
+                                  sprintf("%dZ+%d",$offset,$hourBegin+3),
+                                  sprintf("%dZ+%d",$offset,$hourBegin+6),
+                                  sprintf("%dZ+%d",$offset,$hourBegin+9),
+                                  sprintf("%dZ+%d",$offset,$hourBegin+12),
+                                  sprintf("%dZ+%d",$offset,$hourBegin+15) ],);
+
+##############  END OF REGION DEPENDENT PARAMETERS  ##############
+##################################################################
+##########    ADDITIONS MUST BE MADE ABOVE THIS LINE    ##########
+##################################################################
+1.;
