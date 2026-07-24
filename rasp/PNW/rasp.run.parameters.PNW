@@ -37,11 +37,11 @@ push @{$PARAMETER_DOLIST{'PNW'}}, ( );
 
 # SET GRIB FILE PROCESSING
 # GRIBFILES_PER_FORECAST_PERIOD IS NUMBER OF GRIB FILES PROCESSED AT SAME TIME
-$GRIBFILES_PER_FORECAST_PERIOD{'PNW'} = 6 ;
+$GRIBFILES_PER_FORECAST_PERIOD{'PNW'} = 9 ;
 # BLIPMAPFILEDOLIST LISTS ALL GRIB FILES NEEDED
 
 # SET DOMAIN PARAMETERS FOR STAGE1 [NON-WINDOW] ITERATION
-$FORECAST_PERIODHRS{'PNW'}[0]              = 15;  # used only by initialization programs
+$FORECAST_PERIODHRS{'PNW'}[0]              = 24;  # used only by initialization programs
 $BOUNDARY_UPDATE_PERIODHRS{'PNW'}[0]       = 3;   # used only by initialization programs
 $NDOWN_BOUNDARY_UPDATE_PERIODHRS{'PNW'}[0] = 0;   # should always be 0 for non-windowed case
 
@@ -64,32 +64,27 @@ if(defined $ENV{'OFFSET_HOUR'}) {
 chomp($LOCALTIME_ID{'PNW'}  = `date -d "$day days" +%Z`);
 $LOCALTIME_ADJ{'PNW'} = substr `date -d "$day days" +%z`,0,3; # Only whole hours are taken. RASP cannot handle timezones such as +0530 at the moment
 
-# Pacific time: PDT = UTC-7, PST = UTC-8. Model start is 1h before the first
-# plot hour; forecast window is 15h (see FORECAST_PERIODHRS above), crossing
+# Pacific time: PDT = UTC-7, PST = UTC-8.
+# forecast window is 24h (see FORECAST_PERIODHRS above), covering the full local day; crossing
 # 0Z is fine since end time is computed by date arithmetic.
 $ISDST = ((localtime(time + $day*24*60*60))[8]); # Determine if the simulation date has DST
 if ($ISDST) {
-    $hourBegin = 14;                              # 14Z = 0700 PDT
-    $DOMAIN1_STARTHH{'PNW'}[0]         = '14';    # must have grib file available for this time
-    $DOMAIN1_ENDHH{'PNW'}[0]           = '05';
+    $hourBegin = 7;                               # 07Z = 0000 PDT: full local day
+    $DOMAIN1_STARTHH{'PNW'}[0]         = '07';    # must have grib file available for this time
+    $DOMAIN1_ENDHH{'PNW'}[0]           = '07';
     @{$PLOT_HHMMLIST{'PNW'}[0]} =       ( '0800','0900','1000','1100','1200','1300','1400','1500','1600','1700','1800','1900','2000');
     @{$SAVE_PLOT_HHMMLIST{'PNW'}[0]} =  ( '0800','0900','1000','1100','1200','1300','1400','1500','1600','1700','1800','1900','2000');
 } else {
-    $hourBegin = 15;                              # 15Z = 0700 PST
-    $DOMAIN1_STARTHH{'PNW'}[0]         = '15';    # must have grib file available for this time
-    $DOMAIN1_ENDHH{'PNW'}[0]           = '06';
+    $hourBegin = 8;                               # 08Z = 0000 PST: full local day
+    $DOMAIN1_STARTHH{'PNW'}[0]         = '08';    # must have grib file available for this time
+    $DOMAIN1_ENDHH{'PNW'}[0]           = '08';
     @{$PLOT_HHMMLIST{'PNW'}[0]} =       ( '0800','0900','1000','1100','1200','1300','1400','1500','1600','1700','1800','1900','2000');
     @{$SAVE_PLOT_HHMMLIST{'PNW'}[0]} =  ( '0800','0900','1000','1100','1200','1300','1400','1500','1600','1700','1800','1900','2000');
 }
 
 $hourBegin += 24*$day - $offset;
 
-%GRIBFILE_DOLIST = ( 'PNW'   => [ sprintf("%dZ+%d",$offset,$hourBegin),
-                                  sprintf("%dZ+%d",$offset,$hourBegin+3),
-                                  sprintf("%dZ+%d",$offset,$hourBegin+6),
-                                  sprintf("%dZ+%d",$offset,$hourBegin+9),
-                                  sprintf("%dZ+%d",$offset,$hourBegin+12),
-                                  sprintf("%dZ+%d",$offset,$hourBegin+15) ],);
+%GRIBFILE_DOLIST = ( 'PNW'   => [ map { sprintf("%dZ+%d",$offset,$hourBegin+3*$_) } (0..8) ],);
 
 ##############  END OF REGION DEPENDENT PARAMETERS  ##############
 ##################################################################

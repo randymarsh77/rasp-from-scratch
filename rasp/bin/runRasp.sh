@@ -31,7 +31,7 @@ logDir="${regionDir}/LOG"
 echo "Removing previous results so current run is not contaminated"
 rm -rf ${outDir}/*
 rm -rf ${logDir}/*
-rm -rf ${regionDir}/wrfout_d0*
+rm -rf ${regionDir}/wrfout_d0* ${regionDir}/wrfwind_d0*
 
 runDate="$(date +%Y-%m-%d)"
 runTime="$(date +%H-%M)"
