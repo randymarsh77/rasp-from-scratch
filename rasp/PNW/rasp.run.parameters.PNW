@@ -27,7 +27,10 @@ $LSAVE = 0 ;
 $LRUN_WINDOW{'PNW'} = 0 ;
 
 # SET BASIC PARAMETER LIST
-@{$PARAMETER_DOLIST{'PNW'}} = ( 'wstar','bsratio','wstar_bsratio','hglider','dglider','hwcrit','dwcrit','hbl','dbl','bltopvariab','wblmaxmin','zwblmaxmin','cloudsuck','sfcsunpct','sfcshf','sfctemp','sfcdewpt','mslpress','sfcwind0','sfcwind','sfcwind2','blwind','bltopwind','blwindshear','zsfclcldif','zsfclcl','zsfclclmask','zblcldif','zblcl','zblclmask','blicw','blcwbase','blcloudpct','cfracl','cfracm','cfrach','rain1','cape','press950','press900','press850','press800','press750','press700','press650','press600','press550','press500','pfd_tot' );
+# Wind-on-water focus: only lowest-level wind is generated. The full RASP
+# parameter set (thermals, BL, clouds, pressure levels, ...) is in git history
+# and in TIR's copy of this file if we ever want it back.
+@{$PARAMETER_DOLIST{'PNW'}} = ( 'sfcwind0' );
 
 # ADD POSSIBLE SOUNDINGS (corresponding data must be set in file GM/rasp.region_data.ncl)
 push @{$PARAMETER_DOLIST{'PNW'}}, ( );
