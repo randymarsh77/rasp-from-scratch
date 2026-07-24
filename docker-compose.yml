@@ -32,6 +32,25 @@ services:
     image: ${RASP_IMAGE}:fedora${FEDORA_VERSION}_WRF${WRF_VERSION}-${WRF_MARCH_PROD}_${REGION}
     build:
       context: ./rasp
+      dockerfile: Dockerfile_og
+      args:
+        FEDORA_VERSION: ${FEDORA_VERSION}
+        BASE_IMAGE: ${BASE_IMAGE}
+        WRF_IMAGE: ${WRF_IMAGE}
+        WRF_VERSION: ${WRF_VERSION}
+        WRF_MARCH_BUILD: ${WRF_MARCH_BUILD}
+        WRF_MARCH_PROD: ${WRF_MARCH_PROD}
+        REGION: ${REGION}
+    volumes:
+      - ../results/OUT:/root/rasp/${REGION}/OUT
+      - ../results/LOG:/root/rasp/${REGION}/LOG
+    environment:
+      - START_DAY=${START_DAY:-0}
+      - OFFSET_HOUR=${OFFSET_HOUR:-0}
+  rasp_blank:
+    image: ${RASP_IMAGE}:fedora${FEDORA_VERSION}_WRF${WRF_VERSION}-${WRF_MARCH_PROD}-blank_${REGION}
+    build:
+      context: ./rasp
       dockerfile: Dockerfile
       args:
         FEDORA_VERSION: ${FEDORA_VERSION}
@@ -44,6 +63,7 @@ services:
     volumes:
       - ../results/OUT:/root/rasp/${REGION}/OUT
       - ../results/LOG:/root/rasp/${REGION}/LOG
+      - ../WPS_GEOG:/root/rasp/geog
     environment:
       - START_DAY=${START_DAY:-0}
       - OFFSET_HOUR=${OFFSET_HOUR:-0}

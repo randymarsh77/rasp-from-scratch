@@ -52,14 +52,14 @@ RUN mkdir -p $BASEDIR/bin $BASEDIR/${REGION}/GRIB $BASEDIR/${REGION}/LOG $BASEDI
 ENV PATH="${BASEDIR}/bin:${PATH}"
 
 # Copy only the stuff we need for geogrid
-# COPY geog.tar.gz $BASEDIR
+COPY geog.tar.gz $BASEDIR
 COPY ${REGION}/namelist.wps ${REGION}/GEOGRID.TBL $BASEDIR/${REGION}/
 # Extract geog data and run geogrid. Do this all in one take to keep the image size small
-# RUN tar xf geog.tar.gz \
-#   && cd "$BASEDIR/${REGION}/" \
-#   && cp namelist.wps namelist.wps.template \
-#   && geogrid.exe \
-#   && rm -rf $BASEDIR/geog $BASEDIR/geog.tar.gz
+RUN tar xf geog.tar.gz \
+  && cd "$BASEDIR/${REGION}/" \
+  && cp namelist.wps namelist.wps.template \
+  && geogrid.exe \
+  && rm -rf $BASEDIR/geog $BASEDIR/geog.tar.gz
 
 # Add rasp assets (WRF glue scripts, plot scripts, DrJack library, custom stuff) and the rest of the region folder
 # Do this afterwards so we do not trigger the copying and extraction of geog data each time we change scripts or namelist.input settings
@@ -109,3 +109,5 @@ VOLUME ["$BASEDIR/${REGION}/OUT", "$BASEDIR/${REGION}/LOG"]
 # Set environment for interactive container shells
 RUN echo export BASEDIR=$BASEDIR >> /etc/bashrc \
   && echo export PATH+=:\$BASEDIR/bin >> /etc/bashrc
+
+CMD runRasp.sh ${REGION}
