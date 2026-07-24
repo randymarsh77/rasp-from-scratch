@@ -27,7 +27,8 @@ ENV CC=gcc \
 
 RUN mkdir build && cd build \
   && git clone --branch ${WRF_VERSION} --depth 1 --recurse-submodule https://github.com/wrf-model/WRF.git \
-  && git clone --branch ${WPS_VERSION} --depth 1 https://github.com/wrf-model/WPS.git
+  #&& git clone --branch ${WPS_VERSION} --depth 1 https://github.com/wrf-model/WPS.git
+  && git clone --branch fix_metgrid_output_uninit_var --depth 1 https://github.com/mgduda/WPS.git
 
 COPY patch_registry.sh patch_configure_wrf.sh $BASEDIR/build/WRF/
 COPY patch_configure_wps.sh $BASEDIR/build/WPS/
