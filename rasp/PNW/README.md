@@ -23,9 +23,10 @@ Place converted .bil/.hdr tiles in geog/topo_SRTM/.
 
 ## Low-res smoke test
 
-For pipeline tests with geog_low_res_mandatory only, temporarily set in
-namelist.wps:
-  geog_data_res = 'usgs_10m+10m', 'usgs_10m+10m',
-and in namelist.input: num_land_cat = 24 (USGS 10m has no lakes dataset).
-Terrain will be uselessly smooth — this only validates the machinery and
-domain placement, not the forecast.
+With geog_low_res_mandatory + landuse_30s_with_lakes extracted into the
+WPS_GEOG mount, temporarily set in namelist.wps:
+  geog_data_res = 'lowres', 'lowres',
+(the GEOGRID.TBL 'lowres' keyword maps every field to the low-res bundle,
+except landuse which stays USGS 30s-with-lakes, so num_land_cat=28 is
+unchanged). Terrain will be uselessly smooth — this only validates the
+machinery and domain placement, not the forecast.
