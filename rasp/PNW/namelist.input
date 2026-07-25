@@ -18,7 +18,7 @@
  end_second                          = 00,00,
  interval_seconds                    = 10800
  input_from_file                     = .true., .true.
- history_interval                    = 60,  60
+ history_interval                    = 180, 180
  frames_per_outfile                  = 1, 1
  restart                             = .false.
  restart_interval                    = 5000
@@ -32,7 +32,7 @@
  ignore_iofields_warning             = .true.
  auxhist23_outname                   = "wrfwind_d<domain>_<date>"
  auxhist23_interval                  = 60, 5
- frames_per_auxhist23                = 10000, 10000
+ frames_per_auxhist23                = 10000, 12
  io_form_auxhist23                   = 2
 /
 
